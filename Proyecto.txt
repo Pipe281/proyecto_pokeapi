@@ -4,7 +4,7 @@ Objetivos utilizar de manera correcta los metodos de api:
 GET, POST, DELETE, PATCH, PUT
 Lenguajes de programacion a utilizar:
 Python: 3.12.1
-Framework: Flask ultima version
+Framework: Flask ultima version 3.0.2
 Herramientas:
 VSCODE:
 thunderclient
@@ -19,5 +19,5 @@ Subirlo a AWS.
 Crear front-end
 
 TAREAS POR HACER:
-Crear repositorio de Github y darme acceso
-Crear un entorno virtual en Python. (estudiar)
+Ver endpoints a utilizar en nuestra API
+Desarrollar API Flask
