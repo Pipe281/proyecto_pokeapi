@@ -20,4 +20,10 @@ Crear front-end
 
 TAREAS POR HACER:
 Ver endpoints a utilizar en nuestra API
+-localhosts:3306/dbpoke/{}
+- /pokemon
+- /tipo
+- /entrenador
+- /gimnasio
+
 Desarrollar API Flask
