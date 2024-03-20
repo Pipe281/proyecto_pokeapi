@@ -26,9 +26,30 @@ def getPokemon():
 
     return resultado
 
+@app.route("/nuevo", methods=['POST'])
+def nuevoPokemon():
+    try:
+        conexion = conexion_bd("localhost","root", "root", "dbpoke")
+        conexion.conectar()
+        sql = "INSERT INTO dbpoke.pokemon (idPokemon, idTipo, nombre)VALUES('{0}', '{1}', '{2}')".format(request.json['idPokemon'],request.json['idTipo'],request.json['nombre'])
+        resultado=conexion.query_select(sql)
+        conexion.commit(resultado)        
+        return jsonify({"mensaje": "Curso registrado"})
+        ''' 
+        conexion.conectar()
+        query="INSERT INTO dbpoke.pokemon (idPokemon, idTipo, nombre)VALUES(2, 1, 'Ivysaur');"
+        resultado=conexion.query_select(query)
+        print(resultado)
+        '''
+    except mysql.connector.Error as error: 
+        print("Error al conectarse a la base de datos", error)
+    finally:
+        conexion.desconectar()
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=4000)
-
+    
 
 
 
