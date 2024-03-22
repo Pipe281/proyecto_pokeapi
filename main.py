@@ -32,20 +32,16 @@ def getPokemon():
 @app.route("/nuevo", methods=['POST'])
 def nuevoPokemon():
     conexion.conectar()
-    print(validar_idPokemon(request.json['idPokemon'], conexion))
-    if (validar_idPokemon(request.json['idPokemon'], conexion)): # and validar_idTipo(request.json['idTipo']) and validar_pokeName(request.json['nombre'])):
-        try:
-            poke = conexion.validar_idPokemon()
-            if poke != None:
-                return jsonify({'mensaje': "Código ya existe, no se puede duplicar.", 'exito': False})
-            else:
-                sql = "INSERT INTO dbpoke.pokemon (idPokemon, idTipo, nombre)VALUES('{0}', '{1}', '{2}')".format(request.json['idPokemon'],request.json['idTipo'],request.json['nombre'])
-                resultado=conexion.query_insert(sql)     
-                return jsonify({"mensaje": "Pokemon Ingresado correctamente"})
+    poke = validar_idPokemon(request.json['idPokemon'], conexion)
+    if (poke == 0): # and validar_idTipo(request.json['idTipo']) and validar_pokeName(request.json['nombre'])):
+        try:           
+            sql = "INSERT INTO dbpoke.pokemon (idPokemon, idTipo, nombre)VALUES('{0}', '{1}', '{2}')".format(request.json['idPokemon'],request.json['idTipo'],request.json['nombre'])
+            resultado=conexion.query_insert(sql)     
+            return jsonify({"Mensaje": "Pokemon Ingresado correctamente, 'Estado': 'Exitoso' "})
         except mysql.connector.Error as error: 
-            print("Error al conectarse a la base de datos", error)   
+            return jsonify({'Mensaje' : "Error al insertar Pokemon"})
     else:
-        return jsonify({'mensaje': "Parámetros inválidos...", 'exito': False})    
+        return jsonify({'Mensaje': "Pokemon ya existe o existe un error al validar el dato", 'Estado': 'Fallido' })    
 
 
 if __name__ == '__main__':

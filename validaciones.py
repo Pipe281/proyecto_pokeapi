@@ -1,8 +1,6 @@
 import mysql.connector
 from conexion import conexion_bd
 #Globales
-conexion = conexion_bd("localhost","root", "root", "dbpoke")
-conexion.conectar()
 # Valida el idPokemon (si es numérico y de longitud 6).
 def validar_idPokemon(id: int, conexion):
     if isinstance(id, int) and id < 151:
@@ -14,7 +12,7 @@ def validar_idPokemon(id: int, conexion):
                 return resultado  # El dato no existe en la base de datos
             else:
                 print ("Todo mal")
-                return False  # El dato ya existe en la base de datos
+                return resultado  # El dato ya existe en la base de datos
         except Exception as ex:
             print("Error al validar dato:", ex)
             return False
