@@ -25,10 +25,10 @@ class conexion_bd:
         cursor.execute(consulta)
         return cursor.fetchall()
     
-    def query_leerPoke(self, consulta):
+    def query_fetchone(self, consulta):
         cursor=self.connect.cursor()
         cursor.execute(consulta)
-        return cursor.fetchone()
+        return cursor.fetchone()[0]
 
     def query_insert(self, ingreso):
         cursor=self.connect.cursor()

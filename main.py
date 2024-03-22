@@ -5,7 +5,7 @@ import mysql.connector
 app = Flask(__name__)
 
 from prueba import users_list
-from validaciones import *
+from validaciones import validar_idPokemon
 
 #Variables Globales
 conexion= conexion_bd("localhost","root", "root", "dbpoke")
@@ -29,25 +29,13 @@ def getPokemon():
 
     return resultado
 
-def leer_poke(id):
-    try:
-        conexion.conectar()
-        sql = "SELECT idPokemon, idTipo, nombre FROM POKEMON WHERE idPokemon = '{0}'".format(id)
-        resultado=conexion.query_leerPoke(sql)
-        if resultado != None:
-            poke = {'idPokemon': resultado[0], 'idTipo': resultado[1], 'nombre': resultado[2]}
-            return poke
-        else:
-            return "Error", None
-    except Exception as ex:
-        raise ex
-
 @app.route("/nuevo", methods=['POST'])
 def nuevoPokemon():
     conexion.conectar()
-    if (validar_idPokemon(request.json['idPokemon']) and validar_idTipo(request.json['idTipo']) and validar_pokeName(request.json['nombre'])):
+    print(validar_idPokemon(request.json['idPokemon'], conexion))
+    if (validar_idPokemon(request.json['idPokemon'], conexion)): # and validar_idTipo(request.json['idTipo']) and validar_pokeName(request.json['nombre'])):
         try:
-            poke = leer_poke(request.json['idPokemon'])
+            poke = conexion.validar_idPokemon()
             if poke != None:
                 return jsonify({'mensaje': "Código ya existe, no se puede duplicar.", 'exito': False})
             else:
