@@ -25,11 +25,21 @@ class conexion_bd:
         cursor.execute(consulta)
         return cursor.fetchall()
     
+    def query_select_one(self, consulta):
+        cursor=self.connect.cursor()
+        cursor.execute(consulta)
+        return cursor.fetchone()
+    
     def query_fetchone(self, consulta):
         cursor=self.connect.cursor()
         cursor.execute(consulta)
         return cursor.fetchone()[0]
-
+    
+    def query_delete(self, consulta):
+        cursor=self.connect.cursor()
+        cursor.execute(consulta)
+        self.connect.commit()
+    
     def query_insert(self, ingreso):
         cursor=self.connect.cursor()
         cursor.execute(ingreso)
