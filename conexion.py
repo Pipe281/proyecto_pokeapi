@@ -40,6 +40,12 @@ class conexion_bd:
         cursor.execute(consulta)
         self.connect.commit()
     
+    def query_actualizar(self, consulta):
+        cursor=self.connect.cursor()
+        cursor.execute(consulta)
+        self.connect.commit()
+        return cursor.fetchall()
+
     def query_insert(self, ingreso):
         cursor=self.connect.cursor()
         cursor.execute(ingreso)

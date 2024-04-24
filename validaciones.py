@@ -5,19 +5,21 @@ from conexion import conexion_bd
 def validar_idPokemon(id: int, conexion):
     if isinstance(id, int) and id < 151:
         try:
-            sql = "SELECT COUNT(*) FROM pokemon WHERE idPokemon = '{0}'".format(id)
+            #print("Estoy en el try")
+            sql = "SELECT COUNT(*) FROM dbpoke.pokemon WHERE idPokemon = '{0}'".format(id)
             resultado = conexion.query_fetchone(sql)
             if resultado == 0:
-                print ("Todo bien")
+                print ("ID no existe en base de datos")
                 return resultado  # El dato no existe en la base de datos
             else:
-                print ("Todo mal")
+                print ("ID existe en base de datos")
                 return resultado  # El dato ya existe en la base de datos
         except Exception as ex:
             print("Error al validar dato:", ex)
             return False
     else:
-        print ("Error")
+        #print("Estoy en el else")
+        return "Error"
 
 
 '''

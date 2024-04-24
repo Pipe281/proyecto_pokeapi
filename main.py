@@ -6,6 +6,7 @@ app = Flask(__name__)
 
 from validaciones import validar_idPokemon
 from eliminar import eliminar_Poke
+from actualizar import actualizar_poke
 
 #Variables Globales
 conexion= conexion_bd("localhost","root", "root", "dbpoke")
@@ -31,18 +32,26 @@ def getPokemon():
 
 @app.route("/pokemon/<id>", methods=['GET'])
 def getOnePokemon(id): 
-    try:
-        conexion.conectar()
-        query="SELECT * FROM pokemon WHERE idPokemon = '{0}'".format(id)
-        resultado=conexion.query_select_one(query)
-        resultado = {'idPokemon': resultado[0], 'idTipo': resultado[1], 'Nombre': resultado[2]}
-        print(resultado)
-    except mysql.connector.Error as error: 
-        print("Error al conectarse a la base de datos", error)
-    finally:
-        conexion.desconectar()
+    conexion.conectar()
+    poke = validar_idPokemon(int(id), conexion)
+    """print(type(poke))"""
+    if (poke > 0):
+        try:
+            conexion.conectar()
+            query="SELECT * FROM pokemon WHERE idPokemon = '{0}'".format(id)
+            resultado=conexion.query_select_one(query)
+            resultado = {'idPokemon': resultado[0], 'idTipo': resultado[1], 'Nombre': resultado[2]}
+            return resultado
+            #print(resultado)
+        except mysql.connector.Error as error: 
+            print("Error al conectarse a la base de datos", error)
+        finally:
+            conexion.desconectar()
 
-    return resultado
+    if (poke == 0):
+        return jsonify({'Mensaje': "Pokemon no existe"})    
+    else:
+        return jsonify({'Mensaje': "Error SQL", 'Estado': 'Fallido'})
 
 @app.route("/pokemon/nuevo", methods=['POST'])
 def nuevoPokemon():
@@ -68,10 +77,15 @@ def eliminarPoke(id):
     except mysql.connector.Error as error: 
             return jsonify({'Mensaje' : "Error al eliminar Pokemon"})    
 
-@app.route("/pokemon/actualizar", methods=['PUT'])
-def actualizar_poke():
+@app.route("/pokemon/<id>", methods=['PUT'])
+def actualizarPoke(id):
     conexion.conectar()
-    
+    try:      
+        poke = actualizar_poke(id, conexion)
+        print(poke)
+        return jsonify({"Mensaje": "Pokemon Actualizado correctamente, 'Estado': 'Actualizado' "})
+    except mysql.connector.Error as error: 
+            return jsonify({'Mensaje' : "Error al eliminar Pokemon"})    
 
 if __name__ == '__main__':
     app.run(debug=True, port=4000)
