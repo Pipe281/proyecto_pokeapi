@@ -4,7 +4,7 @@ import mysql.connector
 #from test import 
 app = Flask(__name__)
 
-from validaciones import validar_idPokemon
+from validaciones import validar_idPokemon, validar_post
 from eliminar import eliminar_Poke
 from actualizar import actualizar_poke
 
@@ -31,11 +31,11 @@ def getPokemon():
     return resultado
 
 @app.route("/pokemon/<id>", methods=['GET'])
-def getOnePokemon(id): 
+def getOnePokemon(id):
     conexion.conectar()
-    poke = validar_idPokemon(int(id), conexion)
-    """print(type(poke))"""
-    if (poke > 0):
+    poke = validar_idPokemon(id, conexion)
+  
+    if (isinstance(poke, int) and poke > 0) and poke <= 151:
         try:
             conexion.conectar()
             query="SELECT * FROM pokemon WHERE idPokemon = '{0}'".format(id)
@@ -48,7 +48,7 @@ def getOnePokemon(id):
         finally:
             conexion.desconectar()
 
-    if (poke == 0):
+    if (isinstance(poke, int) and poke == 0):
         return jsonify({'Mensaje': "Pokemon no existe"})    
     else:
         return jsonify({'Mensaje': "Error SQL", 'Estado': 'Fallido'})
@@ -56,7 +56,7 @@ def getOnePokemon(id):
 @app.route("/pokemon/nuevo", methods=['POST'])
 def nuevoPokemon():
     conexion.conectar()
-    poke = validar_idPokemon(request.json['idPokemon'], conexion)
+    poke = validar_post(request.json['idPokemon'], conexion)
     if (poke == 0): # and validar_idTipo(request.json['idTipo']) and validar_pokeName(request.json['nombre'])):
         try:           
             sql = "INSERT INTO dbpoke.pokemon (idPokemon, idTipo, nombre)VALUES('{0}', '{1}', '{2}')".format(request.json['idPokemon'],request.json['idTipo'],request.json['nombre'])
