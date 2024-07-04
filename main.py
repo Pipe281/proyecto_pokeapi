@@ -7,6 +7,8 @@ app = Flask(__name__)
 from validaciones import validar_idPokemon, validar_post
 from eliminar import eliminar_Poke
 from actualizar import actualizar_poke
+from Tipo.nuevo_tipo import insert_tipo
+from Tipo.consultar_tipo import get_tipo
 
 #Variables Globales
 conexion= conexion_bd("localhost","root", "root", "dbpoke")
@@ -86,6 +88,24 @@ def actualizarPoke(id):
         return jsonify({"Mensaje": "Pokemon Actualizado correctamente, 'Estado': 'Actualizado' "})
     except mysql.connector.Error as error: 
             return jsonify({'Mensaje' : "Error al eliminar Pokemon"})    
+
+#Sección para Tipo de Pokemon
+
+@app.route("/pokemon/nuevo_tipo", methods=['POST'])
+def tipo():
+    conexion.conectar()
+    poke_tipo = insert_tipo(request.json['idTipo'],request.json['nombre'], conexion)
+    return poke_tipo
+
+
+@app.route("/pokemon/tipos")
+def getTipo(): 
+    conexion.conectar()
+    poke_tipo = get_tipo(conexion)
+    return poke_tipo
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=4000)
