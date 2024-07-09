@@ -10,6 +10,7 @@ from actualizar import actualizar_poke
 from Tipo.nuevo_tipo import insert_tipo
 from Tipo.consultar_tipo import get_tipo
 from Tipo.eliminar_tipo import eliminar_tipo
+from Tipo.actualizar_tipo import update_tipo
 
 #Variables Globales
 conexion= conexion_bd("localhost","root", "root", "dbpoke")
@@ -113,6 +114,14 @@ def deleteTipo(id):
     except mysql.connector.Error as error: 
             return jsonify({'Mensaje' : "Error al eliminar el Tipo del Pokemon"}) 
 
+@app.route("/pokemon/tipos/<id>", methods=['PUT'])
+def updateTipo(id):
+    try:
+        conexion.conectar()
+        poke_tipo = update_tipo(id, conexion)
+        return poke_tipo
+    except mysql.connector.Error as error: 
+            return jsonify({'Mensaje' : "Error al eliminar Pokemon"})  
 
 if __name__ == '__main__':
     app.run(debug=True, port=4000)
