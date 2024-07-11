@@ -11,7 +11,8 @@ from Tipo.nuevo_tipo import insert_tipo
 from Tipo.consultar_tipo import get_tipo
 from Tipo.eliminar_tipo import eliminar_tipo
 from Tipo.actualizar_tipo import update_tipo
-
+from Entrenador.consultar_entrenador import get_entrenador, get_one_entrenador
+from Entrenador.nuevo_entrenador import post_entrenador
 #Variables Globales
 conexion= conexion_bd("localhost","root", "root", "dbpoke")
 
@@ -122,7 +123,35 @@ def updateTipo(id):
         return poke_tipo
     except mysql.connector.Error as error: 
             return jsonify({'Mensaje' : "Error al eliminar Pokemon"})  
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Valide información ingresada"})  
 
+
+#Sección para Tipo de Pokemon
+
+@app.route("/entrenador")
+def getEntrenador():
+    conexion.conectar()
+    entrenador = get_entrenador(conexion)
+    return entrenador
+
+@app.route("/entrenador/<id>", methods=['GET'])
+def getOneEntrenador(id):
+    conexion.conectar()
+    entrenador = get_one_entrenador(id, conexion)
+    return entrenador
+
+@app.route("/entrenador/nuevo", methods= ['POST'])
+def postEntrenador():
+    try:
+        conexion.conectar()
+        entrenador = post_entrenador(request.json['idEntrenador'], request.json['medallas'], request.json['nombre'], conexion)
+        return entrenador
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Valide información ingresada"})  
+    except mysql.connector.Error as error: 
+            return jsonify({'Mensaje' : "Error al conectarse a la Base de Datos"}) 
+    
 if __name__ == '__main__':
     app.run(debug=True, port=4000)
     

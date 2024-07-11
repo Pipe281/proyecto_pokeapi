@@ -21,10 +21,7 @@ Crear front-end
 TAREAS POR HACER:
 Ver endpoints a utilizar en nuestra API
 -localhosts:3306/dbpoke/{}
-- /pokemon - GET/POST/PUT/PATCH/DELETE
- -/pokemon/{id/nombre} - GET/PUT/PATCH/DELETE
-- /tipo  - GET/POST/PUT/PATCH/DELETE
-- /tipo/{id/nombre} - GET/PUT/PATCH/DELETE
+- /pokemon - Afinar proyecto
 - /entrenador - GET/POST/PUT/PATCH/DELETE
 - /entrenador/{id/nombre} - GET/PUT/PATCH/DELETE
 - /entrenador/{id/nombre}/equipo - GET/POST/PUT/PATCH/DELETE
