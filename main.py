@@ -9,10 +9,12 @@ from eliminar import eliminar_Poke
 from actualizar import actualizar_poke
 from Tipo.nuevo_tipo import insert_tipo
 from Tipo.consultar_tipo import get_tipo
-from Tipo.eliminar_tipo import eliminar_tipo
+from Tipo.eliminar_tipo import delete_tipo
 from Tipo.actualizar_tipo import update_tipo
 from Entrenador.consultar_entrenador import get_entrenador, get_one_entrenador
 from Entrenador.nuevo_entrenador import post_entrenador
+from Entrenador.eliminar_entrenador import delete_entrenador
+from Entrenador.actualizar_entrenador import update_entrenador
 #Variables Globales
 conexion= conexion_bd("localhost","root", "root", "dbpoke")
 
@@ -110,7 +112,7 @@ def tipo():
 def deleteTipo(id):
     conexion.conectar()
     try:      
-        poke = eliminar_tipo(id, conexion)
+        poke = delete_tipo(id, conexion)
         return poke
     except mysql.connector.Error as error: 
             return jsonify({'Mensaje' : "Error al eliminar el Tipo del Pokemon"}) 
@@ -122,12 +124,12 @@ def updateTipo(id):
         poke_tipo = update_tipo(id, conexion)
         return poke_tipo
     except mysql.connector.Error as error: 
-            return jsonify({'Mensaje' : "Error al eliminar Pokemon"})  
+            return jsonify({'Mensaje' : "Error al actualizar Pokemon"})  
     except KeyError as error:
         return jsonify({'Mensaje' : "Valide información ingresada"})  
 
 
-#Sección para Tipo de Pokemon
+#Sección para Entrenador
 
 @app.route("/entrenador")
 def getEntrenador():
@@ -151,7 +153,30 @@ def postEntrenador():
         return jsonify({'Mensaje' : "Valide información ingresada"})  
     except mysql.connector.Error as error: 
             return jsonify({'Mensaje' : "Error al conectarse a la Base de Datos"}) 
+
+@app.route("/entrenador/<id>", methods=['DELETE'])
+def deleteEntrenador(id):
+    try:
+        conexion.conectar()   
+        entrenador = delete_entrenador(id, conexion)
+        return entrenador
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Valide información ingresada"})
+    except mysql.connector.Error as error: 
+        return jsonify({'Mensaje' : "Error al eliminar el entrenador"}) 
+
+@app.route("/entrenador/<id>", methods=['PUT'])
+def updateEntrenador(id):
+    try:
+        conexion.conectar()
+        entrenador = update_entrenador(id, conexion)
+        return entrenador
+    except mysql.connector.Error as error: 
+            return jsonify({'Mensaje' : "Error al eliminar Entrenador"})  
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Valide información ingresada"}) 
     
+
 if __name__ == '__main__':
     app.run(debug=True, port=4000)
     
