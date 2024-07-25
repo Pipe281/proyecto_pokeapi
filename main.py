@@ -15,6 +15,7 @@ from Entrenador.consultar_entrenador import get_entrenador, get_one_entrenador
 from Entrenador.nuevo_entrenador import post_entrenador
 from Entrenador.eliminar_entrenador import delete_entrenador
 from Entrenador.actualizar_entrenador import update_entrenador
+from Gimnasio.consultar_gimnasio import get_gimnasio, get_one_gimnasio
 #Variables Globales
 conexion= conexion_bd("localhost","root", "root", "dbpoke")
 
@@ -176,6 +177,29 @@ def updateEntrenador(id):
     except KeyError as error:
         return jsonify({'Mensaje' : "Valide información ingresada"}) 
     
+
+# Sección para Gimnasio
+@app.route("/gimnasio/")
+def getGimnasio():
+    try:
+        conexion.conectar()
+        entrenador = get_gimnasio(conexion)
+        return entrenador
+    except mysql.connector.Error as error: 
+            return jsonify({'Mensaje' : "Error al consultar el Gimnasio"})  
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Valide información ingresada"}) 
+
+@app.route("/gimnasio/<id>", methods=['GET'])
+def getOneGimasio(id):
+    try:
+        conexion.conectar()
+        gimnasio = get_one_gimnasio(id, conexion)
+        return gimnasio
+    except mysql.connector.Error as error: 
+            return jsonify({'Mensaje' : "Error al consultar el Gimnasio"})  
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Valide información ingresada"}) 
 
 if __name__ == '__main__':
     app.run(debug=True, port=4000)
