@@ -16,6 +16,9 @@ from Entrenador.nuevo_entrenador import post_entrenador
 from Entrenador.eliminar_entrenador import delete_entrenador
 from Entrenador.actualizar_entrenador import update_entrenador
 from Gimnasio.consultar_gimnasio import get_gimnasio, get_one_gimnasio
+from Gimnasio.nuevo_gimnasio import post_gimnasio
+from Gimnasio.eliminar_gimnasio import delete_gimnasio
+from Gimnasio.actualizar_gimnasio import update_gimnasio
 #Variables Globales
 conexion= conexion_bd("localhost","root", "root", "dbpoke")
 
@@ -71,7 +74,7 @@ def nuevoPokemon():
             resultado=conexion.query_insert(sql)     
             return jsonify({"Mensaje": "Pokemon Ingresado correctamente, 'Estado': 'Exitoso' "})
         except mysql.connector.Error as error: 
-            return jsonify({'Mensaje' : "Error al insertar Pokemon"})
+            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})
     else:
         return jsonify({'Mensaje': "Pokemon ya existe o existe un error al validar el dato", 'Estado': 'Fallido' })    
 
@@ -83,7 +86,7 @@ def eliminarPoke(id):
         print(poke)
         return jsonify({"Mensaje": "Pokemon Eliminado correctamente, 'Estado': 'Eliminado' "})
     except mysql.connector.Error as error: 
-            return jsonify({'Mensaje' : "Error al eliminar Pokemon"})    
+            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})    
 
 @app.route("/pokemon/<id>", methods=['PUT'])
 def actualizarPoke(id):
@@ -93,7 +96,7 @@ def actualizarPoke(id):
         print(poke)
         return jsonify({"Mensaje": "Pokemon Actualizado correctamente, 'Estado': 'Actualizado' "})
     except mysql.connector.Error as error: 
-            return jsonify({'Mensaje' : "Error al eliminar Pokemon"})    
+            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})    
 
 #Sección para Tipo de Pokemon
 
@@ -116,7 +119,7 @@ def deleteTipo(id):
         poke = delete_tipo(id, conexion)
         return poke
     except mysql.connector.Error as error: 
-            return jsonify({'Mensaje' : "Error al eliminar el Tipo del Pokemon"}) 
+            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"}) 
 
 @app.route("/pokemon/tipos/<id>", methods=['PUT'])
 def updateTipo(id):
@@ -125,7 +128,7 @@ def updateTipo(id):
         poke_tipo = update_tipo(id, conexion)
         return poke_tipo
     except mysql.connector.Error as error: 
-            return jsonify({'Mensaje' : "Error al actualizar Pokemon"})  
+            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
     except KeyError as error:
         return jsonify({'Mensaje' : "Valide información ingresada"})  
 
@@ -151,7 +154,7 @@ def postEntrenador():
         entrenador = post_entrenador(request.json['idEntrenador'], request.json['medallas'], request.json['nombre'], conexion)
         return entrenador
     except KeyError as error:
-        return jsonify({'Mensaje' : "Valide información ingresada"})  
+        return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
     except mysql.connector.Error as error: 
             return jsonify({'Mensaje' : "Error al conectarse a la Base de Datos"}) 
 
@@ -162,7 +165,7 @@ def deleteEntrenador(id):
         entrenador = delete_entrenador(id, conexion)
         return entrenador
     except KeyError as error:
-        return jsonify({'Mensaje' : "Valide información ingresada"})
+        return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})
     except mysql.connector.Error as error: 
         return jsonify({'Mensaje' : "Error al eliminar el entrenador"}) 
 
@@ -173,7 +176,7 @@ def updateEntrenador(id):
         entrenador = update_entrenador(id, conexion)
         return entrenador
     except mysql.connector.Error as error: 
-            return jsonify({'Mensaje' : "Error al eliminar Entrenador"})  
+            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
     except KeyError as error:
         return jsonify({'Mensaje' : "Valide información ingresada"}) 
     
@@ -186,7 +189,7 @@ def getGimnasio():
         entrenador = get_gimnasio(conexion)
         return entrenador
     except mysql.connector.Error as error: 
-            return jsonify({'Mensaje' : "Error al consultar el Gimnasio"})  
+            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
     except KeyError as error:
         return jsonify({'Mensaje' : "Valide información ingresada"}) 
 
@@ -197,7 +200,41 @@ def getOneGimasio(id):
         gimnasio = get_one_gimnasio(id, conexion)
         return gimnasio
     except mysql.connector.Error as error: 
-            return jsonify({'Mensaje' : "Error al consultar el Gimnasio"})  
+            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Valide información ingresada"}) 
+
+
+@app.route("/gimnasio/nuevo", methods=['POST'])
+def postGimnasio():
+    try:
+        conexion.conectar()
+        gimnasio = post_gimnasio(request.json['idGimnasio'], request.json['ubicacion'], request.json['lider_gym'],request.json['nombre'], conexion)
+        return gimnasio
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
+    except mysql.connector.Error as error: 
+            return jsonify({'Mensaje' : "Error al conectarse a la Base de Datos"}) 
+
+@app.route("/gimnasio/<id>", methods=['DELETE'])
+def deleteGimnasio(id):
+    try:
+        conexion.conectar()   
+        gimansio = delete_gimnasio(id, conexion)
+        return gimansio
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})
+    except mysql.connector.Error as error: 
+        return jsonify({'Mensaje' : "Error al eliminar el gimasio"}) 
+
+@app.route("/gimnasio/<id>", methods=['PUT'])
+def updateGimnasio(id):
+    try:
+        conexion.conectar()
+        gimansio = update_gimnasio(id, conexion)
+        return gimansio
+    except mysql.connector.Error as error: 
+            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
     except KeyError as error:
         return jsonify({'Mensaje' : "Valide información ingresada"}) 
 

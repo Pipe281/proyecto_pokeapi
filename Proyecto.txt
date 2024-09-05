@@ -22,10 +22,8 @@ TAREAS POR HACER:
 Ver endpoints a utilizar en nuestra API
 -localhosts:3306/dbpoke/{}
 - /pokemon - Afinar proyecto
-- /entrenador - GET/POST/PUT/PATCH/DELETE
-- /entrenador/{id/nombre} - GET/PUT/PATCH/DELETE
 - /entrenador/{id/nombre}/equipo - GET/POST/PUT/PATCH/DELETE
-- /gimnasio - GET/POST/PUT/PATCH/DELETE
-- /gimnasio/{id/nombre} - GET/PUT/PATCH/DELETE
+- como pasar un NoteType de Python a null de SQL
+
 
 Desarrollar API Flask
