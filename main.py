@@ -19,6 +19,8 @@ from Gimnasio.consultar_gimnasio import get_gimnasio, get_one_gimnasio
 from Gimnasio.nuevo_gimnasio import post_gimnasio
 from Gimnasio.eliminar_gimnasio import delete_gimnasio
 from Gimnasio.actualizar_gimnasio import update_gimnasio
+from Equipo.consultar_equipo import get_equipo, get_one_equipo
+from Equipo.nuevo_equipo import post_equipo
 #Variables Globales
 conexion= conexion_bd("localhost","root", "root", "dbpoke")
 
@@ -237,6 +239,40 @@ def updateGimnasio(id):
             return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
     except KeyError as error:
         return jsonify({'Mensaje' : "Valide información ingresada"}) 
+
+#Sección para Equipo
+@app.route("/equipo/")
+def getEquipo():
+    try:
+        conexion.conectar()
+        equipo = get_equipo(conexion)
+        return equipo
+    except mysql.connector.Error as error: 
+            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Valide información ingresada"}) 
+
+@app.route("/equipo/<id>", methods=['GET'])
+def getOneEquipo(id):
+    try:
+        conexion.conectar()
+        equipo = get_one_equipo(id, conexion)
+        return equipo
+    except mysql.connector.Error as error: 
+            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Valide información ingresada"}) 
+
+@app.route("/equipo/nuevo", methods=['POST'])
+def postEquipo():
+    try:
+        conexion.conectar()
+        equipo = post_equipo(request.json['idEquipo'], request.json['idPokemon'], request.json['idEntrenador'], conexion)
+        return equipo
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
+    except mysql.connector.Error as error: 
+            return jsonify({'Mensaje' : "Error al conectarse a la Base de Datos"}) 
 
 if __name__ == '__main__':
     app.run(debug=True, port=4000)
