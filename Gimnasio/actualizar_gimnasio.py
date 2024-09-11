@@ -1,6 +1,4 @@
 from flask import request, jsonify
-import mysql.connector
-from conexion import conexion_bd
 
 def update_gimnasio(id: int, conexion):
     try:
@@ -10,7 +8,7 @@ def update_gimnasio(id: int, conexion):
         nombre = str(request.json['nombre'])
         sql = "SELECT COUNT(*) FROM dbpoke.gimnasio WHERE idGimnasio = '{0}'".format(id)
         resultado = conexion.query_fetchone(sql)
-        if resultado != 0 and len(lider_gym) <= 10 and len(ubicacion) <= 10 and len(nombre) <= 10:
+        if resultado != 0 and lider_gym.isalpha() and len(lider_gym) <= 10 and ubicacion.isalpha() and len(ubicacion) <= 10 and nombre.isalpha() and len(nombre) <= 10:
             try:
                 sql = "UPDATE dbpoke.gimnasio SET idGimnasio = '{0}', ubicacion = '{1}', lider_gym = '{2}', nombre = '{3}' WHERE idGimnasio = '{4}'".format(request.json['idGimnasio'], ubicacion, lider_gym, nombre, id)  
                 conexion.query_actualizar(sql)

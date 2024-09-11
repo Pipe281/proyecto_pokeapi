@@ -1,13 +1,11 @@
 from flask import jsonify
-import mysql.connector
-from conexion import conexion_bd
 
 def delete_tipo(id: int, conexion):
     try:
         id = int(id)
         sql = "SELECT COUNT(*) FROM dbpoke.tipo WHERE idTipo = '{0}'".format(id)
         resultado = conexion.query_fetchone(sql)
-        if resultado != 0 and resultado <=18:
+        if resultado != 0:
             try:
                 sql = "DELETE FROM dbpoke.tipo WHERE idTipo = '{0}'".format(id)
                 conexion.query_delete(sql)

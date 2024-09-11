@@ -1,6 +1,5 @@
-from flask import request, jsonify
+from flask import jsonify
 import mysql.connector
-from conexion import conexion_bd
 
 def get_equipo(conexion):
     try:
@@ -20,11 +19,15 @@ def get_one_equipo(id: int, conexion):
     try:
         id = int(id)
         sql = "SELECT COUNT(*) FROM dbpoke.equipo WHERE idEquipo = '{0}'".format(id)
-        resultado = conexion.query_select_one(sql)
-        if resultado != 0 and id <= 8:
-            query = "SELECT pokemon.nombre, entrenador.nombre, idEquipo FROM equipo INNER JOIN pokemon on equipo.idPokemon = pokemon.idPokemon INNER JOIN entrenador on equipo.idEntrenador  = entrenador.idEntrenador WHERE idEquipo = '{0}'".format(id)
+        resultado = conexion.query_fetchone(sql)
+        print(resultado)
+        if resultado > 0 :
+            query = "SELECT pokemon.nombre, entrenador.nombre, idEquipo FROM equipo INNER JOIN pokemon on equipo.idPokemon = pokemon.idPokemon INNER JOIN entrenador on equipo.idEntrenador  = entrenador.idEntrenador WHERE equipo = '{0}'".format(id)
             resultado=conexion.query_select(query)
-            return jsonify({'Pokemon': resultado[0], 'Entrenador': resultado[1],'Número equipo': resultado[2]})
+            equipos = []
+            for rest in resultado:
+                equipos.append( {'Pokemon': rest[0], 'Entrenador': rest[1],'ID equipo': rest[2]})
+            return jsonify(equipos)
         else:
              return jsonify({"Mensaje": "ID no encontrado en Base de Datos, 'Estado': 'Fallido' "})
     except Exception as ex:

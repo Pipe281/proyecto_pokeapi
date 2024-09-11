@@ -4,10 +4,11 @@ import mysql.connector
 #from test import 
 app = Flask(__name__)
 
-from validaciones import validar_idPokemon, validar_post
-from eliminar import eliminar_Poke
-from actualizar import actualizar_poke
-from Tipo.nuevo_tipo import insert_tipo
+from Pokemon.consultar_pokemon import get_pokemon, get_one_pokemon
+from Pokemon.nuevo_pokemon import post_pokemon
+from Pokemon.eliminar_pokemon import delete_pokemon
+from Pokemon.actualizar_pokemon import update_pokemon
+from Tipo.nuevo_tipo import post_tipo
 from Tipo.consultar_tipo import get_tipo
 from Tipo.eliminar_tipo import delete_tipo
 from Tipo.actualizar_tipo import update_tipo
@@ -21,6 +22,7 @@ from Gimnasio.eliminar_gimnasio import delete_gimnasio
 from Gimnasio.actualizar_gimnasio import update_gimnasio
 from Equipo.consultar_equipo import get_equipo, get_one_equipo
 from Equipo.nuevo_equipo import post_equipo
+from Equipo.eliminar_equipo import delete_equipo
 #Variables Globales
 conexion= conexion_bd("localhost","root", "root", "dbpoke")
 
@@ -28,77 +30,59 @@ conexion= conexion_bd("localhost","root", "root", "dbpoke")
 def hello():
     return jsonify({"message": "Hello!"})
 
-
+#Sección para Pokemones
 @app.route("/pokemon")
-def getPokemon(): 
-    try:
-        conexion.conectar()
-        query="SELECT * FROM pokemon"
-        resultado=conexion.query_select(query)
-        print(resultado)
-    except mysql.connector.Error as error: 
-        print("Error al conectarse a la base de datos", error)
-    finally:
-        conexion.desconectar()
+def getPokemon():
+    conexion.conectar()
+    entrenador = get_pokemon(conexion)
+    return entrenador
 
-    return resultado
 
 @app.route("/pokemon/<id>", methods=['GET'])
 def getOnePokemon(id):
-    conexion.conectar()
-    poke = validar_idPokemon(id, conexion)
-  
-    if (isinstance(poke, int) and poke > 0) and poke <= 151:
-        try:
-            conexion.conectar()
-            query="SELECT * FROM pokemon WHERE idPokemon = '{0}'".format(id)
-            resultado=conexion.query_select_one(query)
-            resultado = {'idPokemon': resultado[0], 'idTipo': resultado[1], 'Nombre': resultado[2]}
-            return resultado
-            #print(resultado)
-        except mysql.connector.Error as error: 
-            print("Error al conectarse a la base de datos", error)
-        finally:
-            conexion.desconectar()
+    try:
+        conexion.conectar()
+        poke = get_one_pokemon(id, conexion)
+        return poke
+    except mysql.connector.Error as error: 
+            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Valide información ingresada"}) 
 
-    if (isinstance(poke, int) and poke == 0):
-        return jsonify({'Mensaje': "Pokemon no existe"})    
-    else:
-        return jsonify({'Mensaje': "Error SQL", 'Estado': 'Fallido'})
 
 @app.route("/pokemon/nuevo", methods=['POST'])
-def nuevoPokemon():
-    conexion.conectar()
-    poke = validar_post(request.json['idPokemon'], conexion)
-    if (poke == 0): # and validar_idTipo(request.json['idTipo']) and validar_pokeName(request.json['nombre'])):
-        try:           
-            sql = "INSERT INTO dbpoke.pokemon (idPokemon, idTipo, nombre)VALUES('{0}', '{1}', '{2}')".format(request.json['idPokemon'],request.json['idTipo'],request.json['nombre'])
-            resultado=conexion.query_insert(sql)     
-            return jsonify({"Mensaje": "Pokemon Ingresado correctamente, 'Estado': 'Exitoso' "})
-        except mysql.connector.Error as error: 
-            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})
-    else:
-        return jsonify({'Mensaje': "Pokemon ya existe o existe un error al validar el dato", 'Estado': 'Fallido' })    
+def postPokemon():
+    try:
+        conexion.conectar()
+        poke = post_pokemon(request.json['idPokemon'], request.json['idTipo'], request.json['nombre'], conexion)
+        return poke
+    except mysql.connector.Error as error: 
+            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Valide información ingresada"}) 
 
 @app.route("/pokemon/<id>", methods=['DELETE'])
-def eliminarPoke(id):
-    conexion.conectar()
-    try:      
-        poke = eliminar_Poke(id, conexion)
-        print(poke)
-        return jsonify({"Mensaje": "Pokemon Eliminado correctamente, 'Estado': 'Eliminado' "})
+def deletePokemon(id):
+    try:
+        conexion.conectar()   
+        poke = delete_pokemon(id, conexion)
+        return poke
     except mysql.connector.Error as error: 
-            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})    
-
+            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Valide información ingresada"}) 
+    
+       
 @app.route("/pokemon/<id>", methods=['PUT'])
-def actualizarPoke(id):
-    conexion.conectar()
-    try:      
-        poke = actualizar_poke(id, conexion)
-        print(poke)
-        return jsonify({"Mensaje": "Pokemon Actualizado correctamente, 'Estado': 'Actualizado' "})
+def updatePokemon(id):
+    try:
+        conexion.conectar()
+        poke = update_pokemon(id, conexion)
+        return poke
     except mysql.connector.Error as error: 
-            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})    
+            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Valide información ingresada"})  
 
 #Sección para Tipo de Pokemon
 
@@ -111,7 +95,7 @@ def getTipo():
 @app.route("/pokemon/tipos/nuevo", methods=['POST'])
 def tipo():
     conexion.conectar()
-    poke_tipo = insert_tipo(request.json['idTipo'],request.json['nombre'], conexion)
+    poke_tipo = post_tipo(request.json['idTipo'],request.json['nombre'], conexion)
     return poke_tipo
 
 @app.route("/pokemon/tipos/<id>", methods=['DELETE'])
@@ -155,10 +139,10 @@ def postEntrenador():
         conexion.conectar()
         entrenador = post_entrenador(request.json['idEntrenador'], request.json['medallas'], request.json['nombre'], conexion)
         return entrenador
-    except KeyError as error:
-        return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
     except mysql.connector.Error as error: 
-            return jsonify({'Mensaje' : "Error al conectarse a la Base de Datos"}) 
+            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Valide información ingresada"}) 
 
 @app.route("/entrenador/<id>", methods=['DELETE'])
 def deleteEntrenador(id):
@@ -213,10 +197,10 @@ def postGimnasio():
         conexion.conectar()
         gimnasio = post_gimnasio(request.json['idGimnasio'], request.json['ubicacion'], request.json['lider_gym'],request.json['nombre'], conexion)
         return gimnasio
-    except KeyError as error:
-        return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
     except mysql.connector.Error as error: 
-            return jsonify({'Mensaje' : "Error al conectarse a la Base de Datos"}) 
+            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Valide información ingresada"}) 
 
 @app.route("/gimnasio/<id>", methods=['DELETE'])
 def deleteGimnasio(id):
@@ -224,10 +208,10 @@ def deleteGimnasio(id):
         conexion.conectar()   
         gimansio = delete_gimnasio(id, conexion)
         return gimansio
-    except KeyError as error:
-        return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})
     except mysql.connector.Error as error: 
-        return jsonify({'Mensaje' : "Error al eliminar el gimasio"}) 
+            return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Valide información ingresada"}) 
 
 @app.route("/gimnasio/<id>", methods=['PUT'])
 def updateGimnasio(id):
@@ -267,12 +251,23 @@ def getOneEquipo(id):
 def postEquipo():
     try:
         conexion.conectar()
-        equipo = post_equipo(request.json['idEquipo'], request.json['idPokemon'], request.json['idEntrenador'], conexion)
+        equipo = post_equipo(request.json['idEquipo'], request.json['idPokemon'], request.json['idEntrenador'],request.json['equipo'], conexion)
         return equipo
     except KeyError as error:
         return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})  
     except mysql.connector.Error as error: 
             return jsonify({'Mensaje' : "Error al conectarse a la Base de Datos"}) 
+
+@app.route("/equipo/<id>", methods=['DELETE'])
+def deleteEquipo(id):
+    try:
+        conexion.conectar()   
+        equipo = delete_equipo(id, conexion)
+        return equipo
+    except KeyError as error:
+        return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})
+    except mysql.connector.Error as error: 
+        return jsonify({'Mensaje' : "Error al eliminar el Equipo"}) 
 
 if __name__ == '__main__':
     app.run(debug=True, port=4000)

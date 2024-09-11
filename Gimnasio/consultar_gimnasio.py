@@ -1,6 +1,5 @@
-from flask import request, jsonify
+from flask import jsonify
 import mysql.connector
-from conexion import conexion_bd
 
 def get_gimnasio(conexion):
     try:

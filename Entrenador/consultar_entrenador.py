@@ -1,15 +1,13 @@
-from flask import request, jsonify
+from flask import jsonify
 import mysql.connector
-from conexion import conexion_bd
 
 def get_entrenador(conexion):
     try:
-        conexion.conectar()
         query="SELECT * FROM entrenador"
         resultado=conexion.query_select(query)
         return resultado
     except mysql.connector.Error as error: 
-        print("Error al conectarse a la base de datos", error)
+         return jsonify({'Mensaje' : "Error al consultar la Base de Datos"})
     finally:
         conexion.desconectar()
 
@@ -24,7 +22,7 @@ def get_one_entrenador(id: int, conexion):
         if resultado != 0:
             query="SELECT * FROM entrenador WHERE idEntrenador = '{0}'".format(id)
             resultado=conexion.query_select_one(query)
-            return jsonify({'idPokemon': resultado[0], 'idTipo': resultado[1], 'Nombre': resultado[2]})
+            return jsonify({'idEntrenador': resultado[0], 'Nombre': resultado[1], 'Medallas': resultado[2]})
         else:
              return jsonify({"Mensaje": "ID no encontrado en Base de Datos, 'Estado': 'Fallido' "})
     except Exception as ex:

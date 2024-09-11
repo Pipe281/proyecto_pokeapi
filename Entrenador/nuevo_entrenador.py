@@ -1,8 +1,6 @@
 from flask import jsonify
-import mysql.connector
-from conexion import conexion_bd
 
-def post_entrenador(id: int, medallas, nombre: str, conexion):
+def post_entrenador(id: int, medallas: int, nombre: str, conexion):
     if isinstance(id, int) and isinstance(nombre, str) and len(nombre) <= 25 and (isinstance(medallas, int) or medallas is None):
         try:
             sql = "SELECT COUNT(*) FROM dbpoke.entrenador WHERE idEntrenador = '{0}'".format(id)
@@ -20,4 +18,3 @@ def post_entrenador(id: int, medallas, nombre: str, conexion):
     else:
         return jsonify({"Mensaje": "No es posible ingresar la solicitud valide datos, 'Estado': 'Fallido' "})
 
-#entrenador no mayor a 25caracteres

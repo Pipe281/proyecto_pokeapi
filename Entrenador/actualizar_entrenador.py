@@ -1,6 +1,4 @@
 from flask import request, jsonify
-import mysql.connector
-from conexion import conexion_bd
 
 def update_entrenador(id: int, conexion):
     try:

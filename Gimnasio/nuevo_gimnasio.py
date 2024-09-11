@@ -1,9 +1,7 @@
 from flask import jsonify
-import mysql.connector
-from conexion import conexion_bd
 
 def post_gimnasio(id: int, ubicacion: str, lider_gym: str, nombre: str, conexion):
-    if isinstance(id, int) and id > 0 and isinstance(ubicacion, str) and len(ubicacion) <= 10 and isinstance(lider_gym, str) and len(lider_gym) <= 10 and isinstance(nombre, str) and len(nombre) <= 10:
+    if isinstance(id, int) and id > 0 and ubicacion.isalpha() and isinstance(ubicacion, str) and len(ubicacion) <= 10 and lider_gym.isalpha() and isinstance(lider_gym, str) and len(lider_gym) <= 10 and nombre.isalpha() and isinstance(nombre, str) and len(nombre) <= 10:
         try:
             sql = "SELECT COUNT(*) FROM dbpoke.gimnasio WHERE idGimnasio = '{0}'".format(id)
             resultado = conexion.query_fetchone(sql)
