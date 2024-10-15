@@ -21,9 +21,8 @@ Crear front-end
 TAREAS POR HACER:
 Ver endpoints a utilizar en nuestra API
 -localhosts:3306/dbpoke/{}
-- /pokemon
-- /tipo
-- /entrenador
-- /gimnasio
+- ReAfinar proyecto
+- como pasar un NoteType de Python a null de SQL
+
 
 Desarrollar API Flask
